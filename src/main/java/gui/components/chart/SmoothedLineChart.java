@@ -17,9 +17,9 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class SmoothedLineChart extends StackPane {
-    private SmoothedChart<String, Number> smoothedChart;
+    private final SmoothedChart<String, Number> smoothedChart;
     private Map<LocalDate, Double> balanceMap;
-    private List<ChartSeries> seriesList;
+    private final List<ChartSeries> seriesList;
 
     public SmoothedLineChart() {
         seriesList = new ArrayList<>();
@@ -119,20 +119,19 @@ public class SmoothedLineChart extends StackPane {
                 .count() == 1;
     }
 
-    private void setDailySeries(XYChart.Series<String, Number> balanceSeries, List<GraphDataPoint> graphDataPoints) {
+    private void setDailySeries(XYChart.Series<String, Number> balanceSeries, List<GraphDataPoint> ignoredGraphDataPoints) {
         LocalDate firstDateInData = balanceMap.keySet().stream().min(LocalDate::compareTo).orElse(LocalDate.now());
         LocalDate lastDateInData = balanceMap.keySet().stream().max(LocalDate::compareTo).orElse(LocalDate.now());
         LocalDate firstDayOfMonth = firstDateInData.withDayOfMonth(1);
-        LocalDate endDate = lastDateInData;
 
-        for (LocalDate date = firstDayOfMonth; !date.isAfter(endDate); date = date.plusDays(1)) {
+        for (LocalDate date = firstDayOfMonth; !date.isAfter(lastDateInData); date = date.plusDays(1)) {
             double balanceAmount = balanceMap.getOrDefault(date, 0.0);
             XYChart.Data<String, Number> balanceData = new XYChart.Data<>(date.format(DateTimeFormatter.ofPattern("d")), balanceAmount);
             balanceSeries.getData().add(balanceData);
         }
     }
 
-    private void setMonthlySeries(XYChart.Series<String, Number> balanceSeries, List<GraphDataPoint> graphDataPoints) {
+    private void setMonthlySeries(XYChart.Series<String, Number> balanceSeries, List<GraphDataPoint> ignoredGraphDataPoints) {
         LocalDate firstDateInData = balanceMap.keySet().stream().min(LocalDate::compareTo).orElse(LocalDate.now());
         LocalDate lastDateInData = balanceMap.keySet().stream().max(LocalDate::compareTo).orElse(LocalDate.now());
         LocalDate firstMonth = firstDateInData.withDayOfMonth(1);
