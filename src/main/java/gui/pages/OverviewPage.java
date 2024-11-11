@@ -36,7 +36,7 @@ public class OverviewPage extends BorderPane {
     private static final String INCOME_TYPE = "Income";
     private static final String EXPENSE_TYPE = "Expense";
 
-    private App app;
+    private final App app;
     private VBox headerPane;
     private HBox summaryPane;
     private HBox detailsPane;
@@ -49,9 +49,7 @@ public class OverviewPage extends BorderPane {
     private VBox chartsPane;
     private VBox mainLayout;
 
-    private HBox navigationButtons;
-    
-    private BooleanProperty reloadRequest = new SimpleBooleanProperty(false);
+    private final BooleanProperty reloadRequest = new SimpleBooleanProperty(false);
     private static OverviewPage overviewPage;
 
     private OverviewPage() {
@@ -91,7 +89,7 @@ public class OverviewPage extends BorderPane {
     }
 
     private void loadNavigationButtons() {
-        navigationButtons = new HBox();
+        HBox navigationButtons = new HBox();
         navigationButtons.setAlignment(Pos.TOP_RIGHT);
         navigationButtons.getStyleClass().add("navigation-buttons");
         

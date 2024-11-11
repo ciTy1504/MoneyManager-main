@@ -4,18 +4,19 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.time.format.TextStyle;
 import java.time.temporal.TemporalAdjusters;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import gui.app.App;
 import gui.components.chart.BudgetProgressBar;
 import gui.components.chart.DoughnutChart;
+import gui.components.chart.util.GraphDataPoint;
 import gui.components.util.BalanceLabel;
+import gui.components.util.Modal;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Pos;
+import gui.components.chart.SmoothedLineChart;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
@@ -23,6 +24,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Popup;
 import server.model.Transaction;
 import server.model.Category;
@@ -31,11 +33,8 @@ public class AnalysisPage extends VBox {
     private static final String INCOME_MODE = "Income";
     private static final String EXPENSE_MODE = "Expense";
 
-    private App app;
-    private HBox contentPane;
-    private DoughnutChart categoryChart;
+    private final App app;
     private VBox categoryListPane;
-    private Label categoryLabel;
     private String currentMode;
 
     // Toggle buttons moved to private fields
@@ -153,7 +152,7 @@ public class AnalysisPage extends VBox {
     }
 
     private HBox createContentPane(ObservableList<PieChart.Data> chartData) {
-        contentPane = new HBox();
+        HBox contentPane = new HBox();
         contentPane.getStyleClass().add("analysis-content");
 
         if (chartData.isEmpty()) {
@@ -167,8 +166,8 @@ public class AnalysisPage extends VBox {
             // Center the label within the content pane
             contentPane.getChildren().add(pane);
         } else {
-        	
-            categoryChart = new DoughnutChart(chartData);
+
+            DoughnutChart categoryChart = new DoughnutChart(chartData);
             
             HBox.setHgrow(categoryChart, Priority.ALWAYS);
 
@@ -220,7 +219,7 @@ public class AnalysisPage extends VBox {
         categoryListPane.getStyleClass().add("category-list");
 
         // Title for the category list
-        categoryLabel = new Label("Categories");
+        Label categoryLabel = new Label("Categories");
         categoryLabel.getStyleClass().add("category-list-title");
         categoryListPane.getChildren().add(categoryLabel);
 
@@ -271,19 +270,26 @@ public class AnalysisPage extends VBox {
 
         // Show budget, total days in month, daily spending, total spent
         popupContent.getChildren().add(new Label("Budget: " + Math.round(category.getBudget())));
-        popupContent.getChildren().add(new Label("Số tiền tiêu mỗi ngày: " + Math.round(dailyBudget)));
-        popupContent.getChildren().add(new Label("Tổng số tiền đã tiêu: " + Math.round(total)));
+        popupContent.getChildren().add(new Label("Amount spent per day: " + Math.round(dailyBudget)));
+        popupContent.getChildren().add(new Label("Total amount spent: " + Math.round(total)));
 
         String status;
-        if (total > dailyBudget*currentDay) {
-            status = "Quá chỉ tiêu";
-        } else if (total == dailyBudget*currentDay) {
-            status = "Vừa đủ";
+        Label statusLabel = new Label("Expensed: ");
+
+        if (total > dailyBudget * currentDay) {
+            status = "Exceeded target";
+            statusLabel.setTextFill(Color.RED); // Đặt màu chữ là đỏ
+        } else if (total == dailyBudget * currentDay) {
+            status = "Enough";
+            statusLabel.setTextFill(Color.YELLOW); // Đặt màu chữ là vàng
         } else {
-            status = "Được tiêu thêm";
+            status = "Can spend more";
+            statusLabel.setTextFill(Color.GREEN); // Đặt màu chữ là xanh
         }
 
-        popupContent.getChildren().add(new Label("Mức chi tiêu: " + status));
+        statusLabel.setText("Expensed: " + status); // Cập nhật nội dung label
+
+        popupContent.getChildren().add(statusLabel);
 
         popupContent.getStyleClass().add("popup-content");
         popup.getContent().add(popupContent);
@@ -311,6 +317,9 @@ public class AnalysisPage extends VBox {
         HBox.setHgrow(spacer, Priority.ALWAYS);
         categoryItem.getChildren().addAll(nameLabel, spacer);
 
+        // When category is clicked, show modal with line chart
+        categoryItem.setOnMouseClicked(e -> showCategoryModal(category));
+
         if (category.getBudget() != 0) {
             BudgetProgressBar progressBar = new BudgetProgressBar(200, 30);
             progressBar.getStyleClass().add("budget-progress");
@@ -333,6 +342,48 @@ public class AnalysisPage extends VBox {
         }
 
         categoryListPane.getChildren().add(categoryItem);
+    }
+
+    private void showCategoryModal(Category category) {
+        Modal modal = new Modal();
+
+        // Khởi tạo SmoothedLineChart thay vì LineChart
+        SmoothedLineChart smoothedLineChart = new SmoothedLineChart();
+
+        // Lấy danh sách các giao dịch theo category và mode hiện tại
+        List<Transaction> transactions = app.getTransactionList().stream()
+                .filter(t -> t.getCategory() == category.getId() && t.getType().equals(currentMode))
+                .collect(Collectors.toList());
+
+        // Lưu trữ dữ liệu hàng ngày
+        Map<Integer, Double> dailySpending = new HashMap<>();
+        long totalSpent = 0;
+        for (Transaction transaction : transactions) {
+            int dayOfMonth = transaction.getDateTime().getDayOfMonth();
+            double amount = transaction.getAmount();
+            dailySpending.put(dayOfMonth, dailySpending.getOrDefault(dayOfMonth, 0.0) + amount);
+            totalSpent += (long) amount;
+        }
+
+        // Chuẩn bị dữ liệu cho biểu đồ
+        List<GraphDataPoint> graphDataPoints = new ArrayList<>();
+        for (int day = 1; day <= LocalDate.now().getDayOfMonth(); day++) {
+            double totalForDay = dailySpending.getOrDefault(day, 0.0);
+            graphDataPoints.add(new GraphDataPoint(LocalDate.now().withDayOfMonth(day), totalForDay));
+        }
+
+        // Thêm dữ liệu vào biểu đồ
+        smoothedLineChart.addSeries(graphDataPoints,category.getName(), Color.BLUE);
+
+        // Tạo label để hiển thị tổng số tiền đã tiêu
+        Label totalSpentLabel = new Label("Total: " + totalSpent);
+        totalSpentLabel.setAlignment(Pos.CENTER);
+        totalSpentLabel.setMaxWidth(Double.MAX_VALUE);
+
+        // Tạo VBox để chứa cả biểu đồ và label
+        VBox vbox = new VBox(smoothedLineChart, totalSpentLabel);
+        modal.setContent(vbox);
+        modal.show();
     }
 
     private void refreshPage() {

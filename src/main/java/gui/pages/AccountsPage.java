@@ -7,7 +7,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import javafx.scene.layout.Priority;
 
 import server.model.Account;
@@ -47,10 +46,9 @@ public class AccountsPage extends ScrollPane {
         this.setFitToWidth(true);
     }
     
-    private class CustomTitledPane extends VBox {
+    private static class CustomTitledPane extends VBox {
         private boolean expanded = false; // Track the expansion state
-        private VBox contentBox;
-        private SmoothedLineChart chart; // Single chart instance
+        private final VBox contentBox;
 
         public CustomTitledPane(Account account) {
             setPadding(new Insets(5));
@@ -87,7 +85,8 @@ public class AccountsPage extends ScrollPane {
             contentBox.setPadding(new Insets(10)); // Optional padding for the chart container
 
             // Initialize the single SmoothedLineChart
-            chart = new SmoothedLineChart();
+            // Single chart instance
+            SmoothedLineChart chart = new SmoothedLineChart();
 
             // Create data points
             List<Transaction> transactions = App.getInstance().getTransactionList();
