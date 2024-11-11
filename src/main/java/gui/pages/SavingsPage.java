@@ -2,26 +2,16 @@ package gui.pages;
 
 import gui.app.App;
 import gui.components.chart.CircularProgress;
-import gui.components.form.account.AddSavingForm;
-import gui.components.util.Modal;
 import gui.components.util.RoundedPane;
-import javafx.application.Platform;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import server.model.Account;
-import server.service.AccountService;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,12 +20,10 @@ public class SavingsPage extends ScrollPane {
     private static final double VBOX_SPACING = 20;
     private static final double SUMMARY_PANE_SPACING = 20;
 
-    private App app;
-    private VBox mainLayout;
+    private final App app;
     private HBox summaryPane;
     private GridPane detailsPane;
     private VBox headerPane;
-    private StackPane rootPane;
 
     public SavingsPage() {
         app = App.getInstance();
@@ -45,7 +33,7 @@ public class SavingsPage extends ScrollPane {
     }
 
     private void setupLayout() {
-        mainLayout = new VBox(VBOX_SPACING);
+        VBox mainLayout = new VBox(VBOX_SPACING);
         mainLayout.getStyleClass().addAll("main-layout");
 
         // Ensure that mainLayout expands to take all available space
@@ -169,14 +157,6 @@ public class SavingsPage extends ScrollPane {
 
         savingBox.getChildren().add(progressIndicator);
         return savingBox;
-    }
-
-    public void reloadSavingsPage() {
-        mainLayout.getChildren().clear();
-        loadHeader();
-        loadSummaryPane();
-        loadDetailsPane();
-        mainLayout.getChildren().addAll(headerPane, summaryPane, detailsPane);
     }
 
     private int getColumnCountBasedOnWidth(double width) {

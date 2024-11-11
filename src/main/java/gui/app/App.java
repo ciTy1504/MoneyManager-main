@@ -79,24 +79,24 @@ public class App {
     }
 
     public void prevTimeStamp() {
-        if (month == 1) { // If current month is January
-			month = 12; // Set month to December
-			year--; // Decrease the year
+        if (month == 1) {
+			month = 12;
+			year--;
 		} else {
-			month--; // Just decrease the month
+			month--;
 		}
-        loadTransactionData(); // Reload transaction data
+        loadTransactionData();
     }
 
     public void nextTimeStamp() {
         LocalDateTime now = LocalDateTime.now();
-		if (month == 12) { // If current month is December
-			month = 1; // Set month to January
-			year++; // Increase the year
+		if (month == 12) {
+			month = 1;
+			year++;
 		} else {
-			month++; // Just increase the month
+			month++;
 		}
-        loadTransactionData(); // Reload transaction data
+        loadTransactionData();
     }
 
 	public static App getInstance () {

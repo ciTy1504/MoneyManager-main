@@ -393,7 +393,7 @@ public class SmoothedChart<X, Y> extends AreaChart<X, Y> {
     public void setDecimals(final int DECIMALS) {
         if (null == decimals) {
             _decimals    = Helper.clamp(0, MAX_DECIMALS, DECIMALS);
-            formatString = new StringBuilder("%.").append(_decimals).append("f").toString();
+            formatString = "%." + _decimals + "f";
         } else {
             decimals.set(DECIMALS);
         }
@@ -403,7 +403,7 @@ public class SmoothedChart<X, Y> extends AreaChart<X, Y> {
             decimals = new IntegerPropertyBase(_decimals) {
                 @Override protected void invalidated() {
                     set(Helper.clamp(0, MAX_DECIMALS, get()));
-                    formatString = new StringBuilder("%.").append(_decimals).append("f").toString();
+                    formatString = "%." + _decimals + "f";
                 }
                 @Override public Object getBean() { return SmoothedChart.this; }
                 @Override public String getName() { return "decimals"; }
@@ -806,7 +806,7 @@ public class SmoothedChart<X, Y> extends AreaChart<X, Y> {
             fadeInFadeOut.playFrom(Duration.millis(0));
 
             Point2D tooltipLocation = selector.localToScreen(selector.getCenterX(), selector.getCenterY());
-            String  tooltipText     = new StringBuilder(selectedData.getXValue().toString()).append("\n").append(selectedData.getYValue()).toString();
+            String  tooltipText     = selectedData.getXValue().toString() + "\n" + selectedData.getYValue();
             selectorTooltip.setText(tooltipText);
             selectorTooltip.setX(tooltipLocation.getX());
             selectorTooltip.setY(tooltipLocation.getY());
@@ -834,7 +834,7 @@ public class SmoothedChart<X, Y> extends AreaChart<X, Y> {
                     fadeInFadeOut.playFrom(Duration.millis(0));
 
                     Point2D tooltipLocation = selector.localToScreen(selector.getCenterX(), selector.getCenterY());
-                    String  tooltipText     = new StringBuilder(String.format(Locale.US, formatString, selectedValue)).toString();
+                    String  tooltipText     = String.format(Locale.US, formatString, selectedValue);
                     selectorTooltip.setText(tooltipText);
                     selectorTooltip.setX(tooltipLocation.getX());
                     selectorTooltip.setY(tooltipLocation.getY());

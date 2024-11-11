@@ -123,11 +123,7 @@ public class OverviewPage extends BorderPane {
 
 
     private void updateNavigationButtonsState(Button nextButton) {
-        if (app.latestTime()) {
-            nextButton.setDisable(true); // Disable the next button if at the latest timestamp
-        } else {
-            nextButton.setDisable(false);
-        }
+        nextButton.setDisable(app.latestTime()); // Disable the next button if at the latest timestamp
     }
 
     private void reloadOverviewPage() {
@@ -140,8 +136,7 @@ public class OverviewPage extends BorderPane {
     }
 
     private VBox createMainLayout() {
-        VBox layout = new VBox(VBOX_SPACING);
-        return layout;
+        return new VBox(VBOX_SPACING);
     }
 
     private ScrollPane createScrollPane(VBox content) {
@@ -274,7 +269,7 @@ public class OverviewPage extends BorderPane {
         return addButton;
     }
 
-    private void showAddTransactionForm(TransactionListView transactionListView) {
+    private void showAddTransactionForm(TransactionListView ignoredTransactionListView) {
     	Modal modal = new Modal();
     	modal.setContent(new AddTransactionForm(modal));
         modal.show();
@@ -294,7 +289,7 @@ public class OverviewPage extends BorderPane {
         List<Transaction> transactionList = app.getTransactionList();
         List<GraphDataPoint> incomeData = GraphDataConverter.convertToIncome(transactionList);
         
-        if (incomeData == null || incomeData.isEmpty()) {
+        if (incomeData.isEmpty()) {
             Label noDataLabel = new Label("No data");
             noDataLabel.setTextFill(Color.GRAY);
             incomeChart.getChildren().add(noDataLabel);
@@ -312,7 +307,7 @@ public class OverviewPage extends BorderPane {
         List<Transaction> transactionList = app.getTransactionList();
         List<GraphDataPoint> expenseData = GraphDataConverter.convertToExpense(transactionList);
         
-        if (expenseData == null || expenseData.isEmpty()) {
+        if (expenseData.isEmpty()) {
             Label noDataLabel = new Label("No data");
             noDataLabel.setTextFill(Color.GRAY);
             expenseChart.getChildren().add(noDataLabel);

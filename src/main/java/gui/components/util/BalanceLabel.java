@@ -8,7 +8,6 @@ public class BalanceLabel extends Label {
 
     private static final AppSettings settings = AppSettings.getInstance(); // Singleton instance for settings
 
-    // Constructor that defaults neutral to false
     public BalanceLabel(double number) {
         this(number, false);
     }

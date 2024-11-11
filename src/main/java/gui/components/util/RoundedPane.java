@@ -20,14 +20,12 @@ public class RoundedPane extends VBox {
         Label headerLabel = new Label(header);
         headerLabel.setStyle("-fx-font: bold 20px 'Montserrat';");
 
-        // Add the header label
         this.getChildren().add(headerLabel);
 
-        // Create and add a separator below the header
         Separator separator = new Separator();
-        separator.setPadding(new Insets(10, 0, 10, 0)); // Optional padding around the separator
+        separator.setPadding(new Insets(10, 0, 10, 0));
         VBox.setMargin(separator, new Insets(0, -10, 0, -10));
 
-        this.getChildren().add(separator); // Add separator after the label
+        this.getChildren().add(separator);
     }
 }

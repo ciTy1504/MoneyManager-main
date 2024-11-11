@@ -17,11 +17,11 @@ import server.model.Category;
 import server.service.CategoryService;
 
 public class AddCategoryForm extends VBox {
-    private Modal modal;
+    private final Modal modal;
     private TextField nameField;
     private ComboBox<String> typeComboBox;
     private TextField budgetField;
-    private SettingsPage settingsPage;
+    private final SettingsPage settingsPage;
 
     // Modify constructor to accept a category type
     public AddCategoryForm(Modal modal, String categoryType, SettingsPage settingsPage) {

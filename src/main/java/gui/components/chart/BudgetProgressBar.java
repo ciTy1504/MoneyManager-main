@@ -8,32 +8,26 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 
 public class BudgetProgressBar extends StackPane {
-    private Pane progressPane;
+    private final Pane progressPane;
 
     public BudgetProgressBar(double width, double height) {
         setMaxSize(width, height);
         getStyleClass().add("budget-progress-bar");
         
         Rectangle clip = new Rectangle(width, height);
-        clip.setArcWidth(height); // Ensure fully rounded vertical edges
+        clip.setArcWidth(height);
         clip.setArcHeight(height);
-        //setClip(clip);
-
-        // Progress bar background
         Rectangle background = new Rectangle(width, height);
         background.setArcHeight(height); 
         background.setArcWidth(height);
         background.getStyleClass().add("progress-background");
 
-        // Pane for the actual progress bar
         progressPane = new Pane();
         progressPane.getStyleClass().add("progress-pane");
         progressPane.setClip(clip);
 
-        // Position and style the components
         StackPane.setAlignment(progressPane, Pos.CENTER_LEFT);
 
-        // Add all elements to the StackPane
         getChildren().addAll(background, progressPane);
     }
 
@@ -41,11 +35,9 @@ public class BudgetProgressBar extends StackPane {
         double progressRatio = spending / budget;
         double expectedRatio = (double) currentDay / totalDays;
 
-        // Set progress width based on budget
         double progressWidth = Math.min(progressRatio * getMaxWidth(), getMaxWidth());
         progressPane.setMaxWidth(progressWidth);
 
-        // Update progress color based on spending level
         updateProgressColor(progressRatio, expectedRatio);
     }
 

@@ -3,8 +3,8 @@ package gui.components.chart.util;
 import java.time.LocalDate;
 
 public class GraphDataPoint {
-	private LocalDate date;
-    private double value;
+	private final LocalDate date;
+    private final double value;
 
     public GraphDataPoint(LocalDate date, double value) {
         this.date = date;

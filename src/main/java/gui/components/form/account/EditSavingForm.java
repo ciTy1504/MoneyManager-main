@@ -16,11 +16,11 @@ import server.model.Account;
 import server.service.AccountService;
 
 public class EditSavingForm extends VBox {
-    private Modal modal;
+    private final Modal modal;
     private TextField nameField;
     private TextField goalField;
-    private SettingsPage settingsPage;
-    private Account account;
+    private final SettingsPage settingsPage;
+    private final Account account;
 
     public EditSavingForm(Modal modal, SettingsPage settingsPage, Account account) {
         this.modal = modal;

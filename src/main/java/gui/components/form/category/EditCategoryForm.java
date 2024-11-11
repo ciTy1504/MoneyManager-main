@@ -17,12 +17,12 @@ import server.model.Category;
 import server.service.CategoryService;
 
 public class EditCategoryForm extends VBox {
-    private Modal modal;
+    private final Modal modal;
     private TextField nameField;
     private ComboBox<String> typeComboBox;
     private TextField budgetField;
-    private SettingsPage settingsPage;
-    private Category category;
+    private final SettingsPage settingsPage;
+    private final Category category;
 
     public EditCategoryForm(Modal modal, SettingsPage settingsPage, Category category) {
         this.modal = modal;

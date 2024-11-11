@@ -5,7 +5,6 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
 
@@ -22,6 +21,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.Objects;
+
 import gui.app.App;
 import gui.app.AppSettings;
 import gui.components.form.ExportDataForm;
@@ -62,7 +63,7 @@ public class SettingsPage extends ScrollPane {
     
     private void createContent () {
     	content = new VBox(20);
-        content.getChildren().addAll(createTitle("Settings"),
+        content.getChildren().addAll(createTitle(),
                                      createGeneralSection(),
                                      createAccountsAndSavingsSection(),
                                      createCategorySettingsSection(),
@@ -70,8 +71,8 @@ public class SettingsPage extends ScrollPane {
                                      createDatabaseManagementSection());
     }
 
-    private Label createTitle(String text) {
-        Label title = new Label(text);
+    private Label createTitle() {
+        Label title = new Label("Settings");
         title.getStyleClass().addAll("page-title");
         return title;
     }
@@ -161,7 +162,7 @@ public class SettingsPage extends ScrollPane {
         AppSettings.getInstance().setDarkMode(isDarkMode);
         
         Scene scene = getScene();
-        Node root = (Node)scene.getRoot();
+        Node root = scene.getRoot();
         FadeTransition fadeOut = new FadeTransition(Duration.millis(300), root);
         fadeOut.setFromValue(1.0);
         fadeOut.setToValue(0.0);
@@ -173,11 +174,11 @@ public class SettingsPage extends ScrollPane {
         fadeOut.setOnFinished(e -> {
             // Remove current stylesheet and apply the new one
             if (isDarkMode) {
-                scene.getStylesheets().remove(getClass().getClassLoader().getResource("color-light.css").toExternalForm());
-                scene.getStylesheets().add(getClass().getClassLoader().getResource("color-dark.css").toExternalForm());
+                scene.getStylesheets().remove(Objects.requireNonNull(getClass().getClassLoader().getResource("color-light.css")).toExternalForm());
+                scene.getStylesheets().add(Objects.requireNonNull(getClass().getClassLoader().getResource("color-dark.css")).toExternalForm());
             } else {
-                scene.getStylesheets().remove(getClass().getClassLoader().getResource("color-dark.css").toExternalForm());
-                scene.getStylesheets().add(getClass().getClassLoader().getResource("color-light.css").toExternalForm());
+                scene.getStylesheets().remove(Objects.requireNonNull(getClass().getClassLoader().getResource("color-dark.css")).toExternalForm());
+                scene.getStylesheets().add(Objects.requireNonNull(getClass().getClassLoader().getResource("color-light.css")).toExternalForm());
             }
             fadeIn.play();
         });
@@ -309,8 +310,7 @@ public class SettingsPage extends ScrollPane {
         Button exportButton = new Button("Export Data");
         exportButton.getStyleClass().addAll("fill-blue", "border-blue");
         exportButton.setOnAction(e -> handleExport());
-        VBox exportSection = new VBox(10, header, exportButton);
-        return exportSection;
+        return new VBox(10, header, exportButton);
     }
     
     /*
@@ -327,8 +327,7 @@ public class SettingsPage extends ScrollPane {
         importButton.getStyleClass().addAll("border-blue", "fill-blue");
         importButton.setOnAction(e -> handleImportDatabase());
 
-        VBox dbSection = new VBox(10, header, exportButton, importButton);
-        return dbSection;
+        return new VBox(10, header, exportButton, importButton);
     }
     
     private void handleExportDatabase() {

@@ -28,7 +28,7 @@ public class ExportDataForm extends VBox {
     private TextField fromAmount, toAmount, noteField;
     private ComboBox<Account> accountComboBox;
     private ComboBox<Category> categoryComboBox;
-    private Modal modal;
+    private final Modal modal;
 
     public ExportDataForm(Modal modal) {
         this.modal = modal;

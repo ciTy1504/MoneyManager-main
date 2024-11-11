@@ -31,10 +31,8 @@ public class AccountsPage extends ScrollPane {
         title.getStyleClass().addAll("page-title"); // Apply CSS style
         content.getChildren().add(title);
 
-        // Fetch accounts from the App instance
         List<Account> accounts = App.getInstance().getAccountList();
-        
-        // Create an account box for each account
+
         for (Account account : accounts) {
         	if (account.getGoal() > 0) continue;
             CustomTitledPane accountPane = new CustomTitledPane(account);

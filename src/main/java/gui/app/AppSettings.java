@@ -7,22 +7,18 @@ import java.util.Properties;
 import gui.pages.OverviewPage;
 
 public class AppSettings {
-    // The single instance of AppSettings
     private static AppSettings instance;
 
     private boolean darkMode;
-    private String currency; // Currency string (e.g., "USD")
-    private int numberOfDecimalPlaces; // Number of decimal places for floating-point numbers
-    private boolean currencyBeforeAmount; // Whether currency symbol goes before or after the number
-
+    private String currency;
+    private int numberOfDecimalPlaces;
+    private boolean currencyBeforeAmount;
     private static final String SETTINGS_FILE = "app-settings.properties";
 
-    // Private constructor to prevent instantiation
     private AppSettings() {
         load();
     }
 
-    // Public method to get the single instance of AppSettings
     public static AppSettings getInstance() {
         if (instance == null) {
             synchronized (AppSettings.class) {
@@ -34,7 +30,6 @@ public class AppSettings {
         return instance;
     }
 
-    // Getter and Setter for Theme
     public boolean isDarkMode() {
         return darkMode;
     }
@@ -44,7 +39,6 @@ public class AppSettings {
         save();
     }
 
-    // Getter and Setter for Currency
     public String getCurrency() {
         return currency;
     }
@@ -54,7 +48,6 @@ public class AppSettings {
         save(); // Save settings after modification
     }
 
-    // Getter and Setter for Number of Decimal Places
     public int getNumberOfDecimalPlaces() {
         return numberOfDecimalPlaces;
     }
@@ -64,17 +57,15 @@ public class AppSettings {
         save(); // Save settings after modification
     }
 
-    // Getter and Setter for Currency Symbol Position
     public boolean isCurrencyBeforeAmount() {
         return currencyBeforeAmount;
     }
 
     public void setCurrencyBeforeAmount(boolean currencyBeforeAmount) {
         this.currencyBeforeAmount = currencyBeforeAmount;
-        save(); // Save settings after modification
+        save();
     }
 
-    // Load settings from the settings file
     private void load() {
         Properties properties = new Properties();
         try {
@@ -89,18 +80,16 @@ public class AppSettings {
                 numberOfDecimalPlaces = Integer.parseInt(properties.getProperty("decimal_places", "2")); // Default to 2
                 currencyBeforeAmount = Boolean.parseBoolean(properties.getProperty("currency_before_amount", "true")); // Default to true
             } else {
-                // Set default values if no settings file exists
                 darkMode = false;
                 currency = "USD";
                 numberOfDecimalPlaces = 2;
-                currencyBeforeAmount = true; // Default to placing currency symbol before amount
+                currencyBeforeAmount = true;
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    // Save settings to the settings file
     private void save() {
         Properties properties = new Properties();
         properties.setProperty("dark_mode", String.valueOf(darkMode));

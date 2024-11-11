@@ -117,7 +117,7 @@ public class CategoryDAO extends BaseDAO {
     }
     
     public Category findCategory (int id) {
-    	String sql = "SELECT * FROM categories WHERE id = " + String.valueOf(id);
+    	String sql = "SELECT * FROM categories WHERE id = " + id;
     	Category category = null;
         try {
             getConnection();
